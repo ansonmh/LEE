@@ -17,6 +17,14 @@ import CnCarousel from './components/CN/CnCarousel';
 import EnCarousel from './components/EN/EnCarousel';
 import CnShowType from './components/CN/CnShowType';
 import EnShowType from './components/EN/EnShowType';
+
+import { Form, Dialog, Notification, Button, Input } from 'element-react';
+import 'element-theme-default';
+
+
+const styles ={};
+
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -25,7 +33,11 @@ class App extends Component {
     this.state = {
       language: 'CN',
       EnList: [],
-      CnList: []
+      CnList: [],
+      showContactUs:false,
+      name:"",
+      email:"",
+      itemCode:"",
     };
     this.getAll();
     this.changeLanguage = this.changeLanguage.bind(this);
@@ -47,6 +59,10 @@ class App extends Component {
     this.setState({ language: language });
   }
 
+  handleSubmit = () => {
+    console.log(this.state.name, this.state.itemCode, this.state.email)
+  }
+
   render() {
     if (this.state.language === 'CN') {
       return (
@@ -56,9 +72,9 @@ class App extends Component {
             <NavbarToggler />
             <Collapse navbar>
               <Nav className="ml-auto" navbar>
-                <NavItem>
+                {/* <NavItem>
                   <NavLink >Components</NavLink>
-                </NavItem>
+                </NavItem> */}
                 <UncontrolledDropdown nav inNavbar>
                   <DropdownToggle nav caret>
                     產品
@@ -70,7 +86,7 @@ class App extends Component {
                   </DropdownMenu>
                 </UncontrolledDropdown>
                 <NavItem>
-                  <NavLink >聯絡我們</NavLink>
+                  <NavLink onClick={()=> this.setState({showContactUs:true})}>聯絡我們</NavLink>
                 </NavItem>
                 <NavItem>
                   <NavLink onClick={() => this.changeLanguage("EN")}>English</NavLink>
@@ -80,6 +96,48 @@ class App extends Component {
           </Navbar>
           <CnCarousel/>
           <CnShowType/>
+
+          <Dialog
+                        title="Contact us"
+                        visible={this.state.showContactUs}
+                        onCancel={() => this.setState({ showContactUs: false })}
+                        size="medium"
+                        customClass="dialog"
+                    >
+                        <Dialog.Body>
+                            <Form labelPosition="top">
+                                <Form.Item label="Sned Request"> 
+                                     <Input 
+                                     placeholder="Name"
+                                     trim={true}
+                                     onChange={name => this.setState({name})}
+                                     />
+                                     <Input 
+                                     placeholder="Email"
+                                     trim={true}
+                                     onChange={email => this.setState({email})}
+                                     />
+                                     <Input 
+                                     placeholder="Product Code"
+                                     trim={true}
+                                     onChange={itemCode  => this.setState({itemCode})}
+                                     />
+                                </Form.Item>
+                            </Form>
+                        </Dialog.Body>
+                        <Dialog.Footer>
+                            <Button onClick={() => this.setState({ showContactUs: false })}>
+                                Cancel
+                        </Button>
+                        <Button
+                        type="primary"
+                        disabled={!this.state.email || !this.state.name || !this.state.itemCode}
+                        onClick={this.handleSubmit}
+                        >
+                          Submit
+                        </Button>
+                        </Dialog.Footer>
+                    </Dialog>
         </div>
       );
     } else {

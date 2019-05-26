@@ -16,8 +16,9 @@ class CnShowType extends Component {
         this.state = {
             CnList: [],
             Show: 'Null',
+            SelectedName:"",
             PhotoUrl: [],
-            // imageSources:storage.ref(Nylon Lace/list),
+            ItemNameList:[],
         };
         this.getAll();
         this.handleTypeChange = this.handleTypeChange.bind(this)
@@ -34,12 +35,19 @@ class CnShowType extends Component {
             this.setState({ PhotoUrl })
             console.log(PhotoUrl)
         })
+        db.collection('TraditionalChinses').onSnapshot(coll => {
+            const ItemNameList = coll.docs.map(doc => doc.data().CnName)
+            this.setState({ ItemNameList })
+            console.log(ItemNameList)
+        })
 
     }
 
     handleTypeChange(value) {
         console.log(value.topic);
+        console.log(value.index);
         this.setState({ Show: value.topic })
+        this.setState({SelectedName:this.state.ItemNameList[value.index]})
     }
 
     // getSrcUrL() {
@@ -91,7 +99,7 @@ class CnShowType extends Component {
         if (this.state.Show !== 'Null') {
             return (
                 <div>
-                    <h1><CnShowItem Selected={this.state.Show}/></h1>
+                    <h1><CnShowItem Selected={this.state.Show}  SelectedName={this.state.SelectedName}/></h1>
                 </div>   
             )
         } else {
@@ -103,8 +111,8 @@ class CnShowType extends Component {
                             <Col md={4} key={topic}>
                                 <Card body>
                                     <CardImg top width="100%" src={this.state.PhotoUrl[index]} alt="No Image Found" />
-                                    <CardTitle>{topic}</CardTitle>
-                                    <Button onClick={() => this.handleTypeChange({ topic })} >更多資訊</Button>
+                                    <CardTitle>{this.state.ItemNameList[index]}</CardTitle>
+                                    <Button onClick={() => this.handleTypeChange({ topic, index })} >更多資訊</Button>
                                 </Card>
                             </Col>)}
                     </Row>

@@ -5,8 +5,9 @@ import {
     CardTitle, Button,
     Row, Col
 } from 'reactstrap';
-
-import CnModal from './CnModal';
+import { Form, Dialog, Notification } from 'element-react';
+import 'element-theme-default';
+import Magnifier from "react-magnifier";
 
 class CnShowItem extends Component {
     constructor(props) {
@@ -17,6 +18,8 @@ class CnShowItem extends Component {
             Show: 'Null',
             PhotoUrl: [],
             isShowModal: false,
+            showDetailsDialog: false,
+            SelectedImg:""
         };
         this.getAll();
     }
@@ -33,16 +36,11 @@ class CnShowItem extends Component {
     }
 
 
-    showModal = () => {
-        this.setState({isShowModal:!this.state.isShowModal});
-        console.log(this.state.isShowModal);
-    }
-
     render() {
         // console.log(this.props);
         return (
             <div>
-                <h1>{this.props.Selected}</h1>
+                <h1>{this.props.SelectedName}</h1>
 
                 <Row>
                     {this.state.itemList.map((topic, index) =>
@@ -50,13 +48,37 @@ class CnShowItem extends Component {
                             <Card body>
                                 <CardImg top width="100%" src={this.state.PhotoUrl[index]} alt="No Image Found" />
                                 <CardTitle>{topic}</CardTitle>
-                                <Button onClick={() => this.showModal()} ></Button>
+                                <Button onClick={() => this.setState({ showDetailsDialog: true, SelectedImg:this.state.PhotoUrl[index] })} >
+                                Details
+                                </Button>
                             </Card>
                         </Col>)
                     }
                 </Row>
-                <CnModal>
-                </CnModal>
+
+
+                    <Dialog
+                        title="Product Details"
+                        visible={this.state.showDetailsDialog}
+                        onCancel={() => this.setState({ showDetailsDialog: false })}
+                        size="large"
+                        customClass="dialog"
+                    >
+                        <Dialog.Body>
+                            <Form labelPosition="top">
+                                <Form.Item>
+                                {/* <CardImg top width="100%" src={this.state.SelectedImg} alt="No Image Found" /> */}
+                                <Magnifier  src={this.state.SelectedImg}/>
+                                </Form.Item>
+                            </Form>
+                        </Dialog.Body>
+                        <Dialog.Footer>
+                            <Button onClick={() => this.setState({ showDetailsDialog: false })}>
+                                Cancel
+                        </Button>
+                        </Dialog.Footer>
+                    </Dialog>
+                
             </div>
         )
 
