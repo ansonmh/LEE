@@ -8,6 +8,7 @@ import {
 import { Form, Dialog, Notification } from 'element-react';
 import 'element-theme-default';
 import Magnifier from "react-magnifier";
+import { get } from 'https';
 
 class CnShowItem extends Component {
     constructor(props) {
@@ -24,6 +25,21 @@ class CnShowItem extends Component {
         this.getAll();
     }
 
+ componentDidMount(){
+    db.collection('TraditionalChinses').doc(this.props.Selected).collection(this.props.Selected).onSnapshot(coll => {
+        const itemList = coll.docs.map(doc => doc.data().ID)
+        const PhotoUrl = coll.docs.map(doc => doc.data().photo)
+        this.setState({ itemList })
+        this.setState({ PhotoUrl })
+        console.log(itemList);
+        console.log(PhotoUrl);
+    })
+ }
+// componentDidMount(){
+//     this.getAll();
+// }
+
+
     getAll() {
         db.collection('TraditionalChinses').doc(this.props.Selected).collection(this.props.Selected).onSnapshot(coll => {
             const itemList = coll.docs.map(doc => doc.data().ID)
@@ -37,7 +53,7 @@ class CnShowItem extends Component {
 
 
     render() {
-        // console.log(this.props);
+        // console.log(this.props);//
         return (
             <div>
                 <h1>{this.props.SelectedName}</h1>

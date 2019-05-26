@@ -22,22 +22,24 @@ import { Form, Dialog, Notification, Button, Input } from 'element-react';
 import 'element-theme-default';
 
 
-const styles ={};
+const styles = {};
 
 
 class App extends Component {
   constructor(props) {
     super(props);
 
-  
+
     this.state = {
       language: 'CN',
       EnList: [],
       CnList: [],
-      showContactUs:false,
-      name:"",
-      email:"",
-      itemCode:"",
+      showContactUs: false,
+      name: "",
+      email: "",
+      itemCode: "",
+      ItemNameList: [],
+      NavBarSeleect:null,
     };
     this.getAll();
     this.changeLanguage = this.changeLanguage.bind(this);
@@ -52,7 +54,11 @@ class App extends Component {
       const CnList = coll.docs.map(doc => doc.data().name)
       this.setState({ CnList })
     })
-
+    db.collection('TraditionalChinses').onSnapshot(coll => {
+      const ItemNameList = coll.docs.map(doc => doc.data().CnName)
+      this.setState({ ItemNameList })
+      console.log(ItemNameList)
+    })
   }
 
   changeLanguage(language) {
@@ -68,7 +74,7 @@ class App extends Component {
       return (
         <div className="App">
           <Navbar color="light" light expand="md">
-            <NavbarBrand href="/">利興行</NavbarBrand>
+            <NavbarBrand href="/"><h1>利興行</h1></NavbarBrand>
             <NavbarToggler />
             <Collapse navbar>
               <Nav className="ml-auto" navbar>
@@ -80,13 +86,13 @@ class App extends Component {
                     產品
                 </DropdownToggle>
                   <DropdownMenu right>
-                    {this.state.CnList.map((topic, index) =>
-                      <DropdownItem key={topic}>{topic}</DropdownItem>
+                    {this.state.ItemNameList.map((topic, index) =>
+                      <DropdownItem key={topic} onClick={()=> this.setState({NavBarSeleect:this.state.CnList[index]})}>{topic}</DropdownItem>
                     )}
                   </DropdownMenu>
                 </UncontrolledDropdown>
                 <NavItem>
-                  <NavLink onClick={()=> this.setState({showContactUs:true})}>聯絡我們</NavLink>
+                  <NavLink onClick={() => this.setState({ showContactUs: true })}>聯絡我們</NavLink>
                 </NavItem>
                 <NavItem>
                   <NavLink onClick={() => this.changeLanguage("EN")}>English</NavLink>
@@ -94,50 +100,50 @@ class App extends Component {
               </Nav>
             </Collapse>
           </Navbar>
-          <CnCarousel/>
-          <CnShowType/>
+          <CnCarousel />
+          <CnShowType  NavBarSeleect={this.state.NavBarSeleect} list={""}/>
 
           <Dialog
-                        title="Contact us"
-                        visible={this.state.showContactUs}
-                        onCancel={() => this.setState({ showContactUs: false })}
-                        size="medium"
-                        customClass="dialog"
-                    >
-                        <Dialog.Body>
-                            <Form labelPosition="top">
-                                <Form.Item label="Sned Request"> 
-                                     <Input 
-                                     placeholder="Name"
-                                     trim={true}
-                                     onChange={name => this.setState({name})}
-                                     />
-                                     <Input 
-                                     placeholder="Email"
-                                     trim={true}
-                                     onChange={email => this.setState({email})}
-                                     />
-                                     <Input 
-                                     placeholder="Product Code"
-                                     trim={true}
-                                     onChange={itemCode  => this.setState({itemCode})}
-                                     />
-                                </Form.Item>
-                            </Form>
-                        </Dialog.Body>
-                        <Dialog.Footer>
-                            <Button onClick={() => this.setState({ showContactUs: false })}>
-                                Cancel
+            title="Contact us"
+            visible={this.state.showContactUs}
+            onCancel={() => this.setState({ showContactUs: false })}
+            size="medium"
+            customClass="dialog"
+          >
+            <Dialog.Body>
+              <Form labelPosition="top">
+                <Form.Item label="Sned Request">
+                  <Input
+                    placeholder="Name"
+                    trim={true}
+                    onChange={name => this.setState({ name })}
+                  />
+                  <Input
+                    placeholder="Email"
+                    trim={true}
+                    onChange={email => this.setState({ email })}
+                  />
+                  <Input
+                    placeholder="Product Code"
+                    trim={true}
+                    onChange={itemCode => this.setState({ itemCode })}
+                  />
+                </Form.Item>
+              </Form>
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Button onClick={() => this.setState({ showContactUs: false })}>
+                Cancel
                         </Button>
-                        <Button
-                        type="primary"
-                        disabled={!this.state.email || !this.state.name || !this.state.itemCode}
-                        onClick={this.handleSubmit}
-                        >
-                          Submit
+              <Button
+                type="primary"
+                disabled={!this.state.email || !this.state.name || !this.state.itemCode}
+                onClick={this.handleSubmit}
+              >
+                Submit
                         </Button>
-                        </Dialog.Footer>
-                    </Dialog>
+            </Dialog.Footer>
+          </Dialog>
         </div>
       );
     } else {
@@ -170,8 +176,8 @@ class App extends Component {
               </Nav>
             </Collapse>
           </Navbar>
-          <EnCarousel/>
-          <EnShowType/>
+          <EnCarousel />
+          <EnShowType />
         </div>
       );
     }

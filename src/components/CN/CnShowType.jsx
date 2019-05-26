@@ -16,19 +16,21 @@ class CnShowType extends Component {
         this.state = {
             CnList: [],
             Show: 'Null',
-            SelectedName:"",
+            SelectedName: "",
             PhotoUrl: [],
-            ItemNameList:[],
+            ItemNameList: [],
+            NaNavBarSeleect: this.props.NavBarSeleect
         };
         this.getAll();
         this.handleTypeChange = this.handleTypeChange.bind(this)
+        console.log(this.props.NavBarSeleect)
     }
 
     getAll() {
         db.collection('TraditionalChinses').onSnapshot(coll => {
             const CnList = coll.docs.map(doc => doc.data().name)
             this.setState({ CnList })
-            
+
         })
         db.collection('TraditionalChinses').onSnapshot(coll => {
             const PhotoUrl = coll.docs.map(doc => doc.data().photo)
@@ -47,7 +49,7 @@ class CnShowType extends Component {
         console.log(value.topic);
         console.log(value.index);
         this.setState({ Show: value.topic })
-        this.setState({SelectedName:this.state.ItemNameList[value.index]})
+        this.setState({ SelectedName: this.state.ItemNameList[value.index] })
     }
 
     // getSrcUrL() {
@@ -96,11 +98,18 @@ class CnShowType extends Component {
     // }//end
 
     render() {
-        if (this.state.Show !== 'Null') {
+
+        if (this.props.NavBarSeleect !== null) {
             return (
                 <div>
-                    <h1><CnShowItem Selected={this.state.Show}  SelectedName={this.state.SelectedName}/></h1>
-                </div>   
+                    <h1><CnShowItem Selected={this.props.NavBarSeleect} SelectedName={this.props.NavBarSeleect} /></h1>
+                </div>)
+        }
+        else if (this.state.Show !== 'Null') {
+            return (
+                <div>
+                    <h1><CnShowItem Selected={this.state.Show} SelectedName={this.state.SelectedName} /></h1>
+                </div>
             )
         } else {
             return (
